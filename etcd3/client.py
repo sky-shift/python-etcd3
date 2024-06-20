@@ -678,18 +678,17 @@ class MultiEndpointEtcd3Client(object):
         return delete_response.deleted >= 1
 
     @_handle_errors
-    def delete_prefix(self, prefix):
+    def delete_prefix(self, prefix, prev_kv=False):
         """Delete a range of keys with a prefix in etcd."""
         delete_request = self._build_delete_request(
             prefix,
-            range_end=utils.prefix_range_end(utils.to_bytes(prefix))
+            range_end=utils.prefix_range_end(utils.to_bytes(prefix)),
+            prev_kv=prev_kv,
         )
-        return self.kvstub.DeleteRange(
-            delete_request,
-            self.timeout,
-            credentials=self.call_credentials,
-            metadata=self.metadata
-        )
+        return self.kvstub.DeleteRange(delete_request,
+                                    self.timeout,
+                                    credentials=self.call_credentials,
+                                    metadata=self.metadata)
 
     @_handle_errors
     def status(self):
